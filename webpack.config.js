@@ -58,7 +58,14 @@ module.exports = [
                     loader: 'expose-loader?VirtualMachine'
                 }
             ])
-        }
+        },
+        plugins: base.plugins.concat([
+          new CopyWebpackPlugin([{
+            from: 'assets',
+            to: 'static/extensions/scratch3_music',
+            context: 'src/extensions/scratch3_music'
+          }])
+        ])
     }),
     // Node-compatible
     defaultsDeep({}, base, {
@@ -142,7 +149,8 @@ module.exports = [
                 from: 'node_modules/scratch-svg-renderer/dist/web'
             }, {
                 from: 'src/playground'
-            }])
+            }
+          ])
         ])
     })
 ];

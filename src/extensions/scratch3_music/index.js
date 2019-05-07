@@ -10,12 +10,15 @@ const Timer = require('../../util/timer');
  * The instrument and drum sounds, loaded as static assets.
  * @type {object}
  */
-let assetData = {};
-try {
-    assetData = require('./manifest');
-} catch (e) {
-    // Non-webpack environment, don't worry about assets.
-}
+/**
+ * 方案1，官方做法，同步加载资源，会导致js过大，不采用，注释掉-neo
+ */
+// let assetData = {};
+// try {
+//     assetData = require('./manifest');
+// } catch (e) {
+//     // Non-webpack environment, don't worry about assets.
+// }
 
 /**
  * Icon svg to be displayed at the left edge of each extension block, encoded as a data URI.
@@ -124,12 +127,50 @@ class Scratch3MusicBlocks {
     _storeSound (filePath, index, playerArray) {
         const fullPath = `${filePath}.mp3`;
 
-        if (!assetData[fullPath]) return;
+        /**
+         * 方案1，官方做法，同步加载资源，会导致js过大，不采用，注释掉-neo
+         */
+        // if (!assetData[fullPath]) return;
 
-        // The sound player has already been downloaded via the manifest file required above.
-        const soundBuffer = assetData[fullPath];
+        // // The sound player has already been downloaded via the manifest file required above.
+        // const soundBuffer = assetData[fullPath];
 
-        return this._decodeSound(soundBuffer).then(player => {
+        // return this._decodeSound(soundBuffer).then(player => {
+        //     playerArray[index] = player;
+        // });
+
+        /**
+         * 方案2，采用xhr异步加载方式读取资源，资源copy到项目里。-neo
+         */
+        const loadAssetPromise = ()=>{
+          const readPromise = new Promise((resolve, reject)=>{
+          let oReq = new XMLHttpRequest();
+          oReq.open("GET", `/static/extensions/scratch3_music/${fullPath}`, true);
+          oReq.responseType = "arraybuffer";
+          oReq.onload = function () {
+            if(oReq.status !== 200) {
+              reject();
+              return;
+            }
+            
+            var soundBuffer = oReq.response; // Note: not oReq.responseText
+            if (soundBuffer) {
+              // console.log('soundBuffer = ' + soundBuffer);
+              resolve(soundBuffer);
+            }
+          };
+
+          oReq.onerror = function(err) {
+            // console.log('err = ' + err);
+            reject();
+          };
+          oReq.send(null);
+          });
+
+          return readPromise;
+        }
+
+        return loadAssetPromise().then((soundBuffer)=>this._decodeSound(soundBuffer)).then(player => {
             playerArray[index] = player;
         });
     }
