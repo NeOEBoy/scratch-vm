@@ -376,6 +376,15 @@ class Scratch3LooksBlocks {
                 target.setCostume(target.currentCostume + 1);
             } else if (requestedCostume === 'previous costume') {
                 target.setCostume(target.currentCostume - 1);
+            } else if(requestedCostume === 'random costume') {
+                // Don't pick the current costume, so that the block
+                // will always have an observable effect.
+                const numCostumes = target.getCostumes().length;
+                if (numCostumes > 1) {
+                    let selectedIndex = Math.floor(Math.random() * (numCostumes - 1));
+                    if (selectedIndex === target.currentCostume) selectedIndex += 1;
+                    target.setCostume(selectedIndex);
+                }
             // Try to cast the string to a number (and treat it as a costume index)
             // Pure whitespace should not be treated as a number
             // Note: isNaN will cast the string to a number before checking if it's NaN
