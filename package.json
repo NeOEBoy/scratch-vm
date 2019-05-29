@@ -70,7 +70,6 @@
     "lodash.defaultsdeep": "4.6.0",
     "pngjs": "^3.3.2",
     "scratch-audio": "latest",
-    "scratch-blocks": "latest",
     "scratch-storage": "^1.1.0",
     "script-loader": "0.7.2",
     "stats.js": "^0.17.0",
