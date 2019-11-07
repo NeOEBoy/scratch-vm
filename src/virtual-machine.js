@@ -85,6 +85,13 @@ class VirtualMachine extends EventEmitter {
         this.runtime.on(Runtime.PROJECT_START, () => {
             this.emit(Runtime.PROJECT_START);
         });
+
+        /// 不知道是不是官方漏掉这个事件，加回去 begin-neo
+        this.runtime.on(Runtime.PROJECT_STOP_ALL, () => {
+          this.emit(Runtime.PROJECT_STOP_ALL);
+        });
+        /// 不知道是不是官方漏掉这个事件，加回去 end-neo
+
         this.runtime.on(Runtime.PROJECT_RUN_START, () => {
             this.emit(Runtime.PROJECT_RUN_START);
         });
